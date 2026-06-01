@@ -52,6 +52,7 @@ h1 em { display: block; font-family: cursive; text-transform: none; font-size: .
 .category-card div { position: absolute; bottom: 28px; left: 28px; z-index: 2; }
 .category-card h3 { text-transform: uppercase; letter-spacing: 2px; font-weight: 400; font-size: 20px; margin-bottom: 13px; }
 .category-card span { font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--cream); }
+.category-card small, .album-views, .album-content small { display: block; margin-bottom: 12px; color: var(--muted); font-family: Arial, sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
 
 .about { display: grid; grid-template-columns: 1fr 1fr; min-height: 560px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .about-image { position: relative; }
@@ -283,7 +284,7 @@ body { overflow-x: hidden; }
   max-width: 440px;
   color: var(--cream);
   line-height: 1.65;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 .album-content strong {
   font-family: Arial, sans-serif;

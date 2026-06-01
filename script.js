@@ -1,4 +1,4 @@
-const API_BASE_URL = window.KAUA_LIPPERT_API_URL || 'https://caverna-digital-api.vercel.app/api';
+const API_BASE_URL = window.KAUA_LIPPERT_API_URL || 'http://localhost:3333/api';
 
 let observer;
 
@@ -64,6 +64,16 @@ async function requestApi(path) {
   return response.json();
 }
 
+async function postApi(path) {
+  const response = await fetch(`${API_BASE_URL}${path}`, { method: 'POST' });
+
+  if (!response.ok) {
+    throw new Error(`API error ${response.status}`);
+  }
+
+  return response.json();
+}
+
 async function fetchAlbums() {
   const payload = await requestApi('/albums');
   return Array.isArray(payload.data) ? payload.data : [];
@@ -72,6 +82,31 @@ async function fetchAlbums() {
 async function fetchAlbum(identifier) {
   const payload = await requestApi(`/albums/${encodeURIComponent(identifier)}`);
   return payload.data;
+}
+
+async function incrementAlbumView(album) {
+  const albumId = album.id;
+  if (!albumId) return album;
+
+  const storageKey = `viewed_album_${albumId}`;
+  if (sessionStorage.getItem(storageKey)) {
+    return album;
+  }
+
+  sessionStorage.setItem(storageKey, 'true');
+
+  try {
+    const payload = await postApi(`/albums/${encodeURIComponent(albumId)}/views`);
+    return payload.data || album;
+  } catch (error) {
+    sessionStorage.removeItem(storageKey);
+    throw error;
+  }
+}
+
+function formatViews(views = 0) {
+  const value = Number(views) || 0;
+  return `${value} ${value === 1 ? 'visualização' : 'visualizações'}`;
 }
 
 function setContentState(container, message) {
@@ -96,6 +131,7 @@ function renderHomeAlbums(albums) {
       <img src="${escapeHtml(album.coverUrl)}" alt="${escapeHtml(album.title)}" loading="lazy">
       <div>
         <h3>${escapeHtml(album.title)}</h3>
+        <small>${escapeHtml(formatViews(album.views))}</small>
         <span>Ver mais →</span>
       </div>
     </a>
@@ -120,6 +156,7 @@ function renderLatestStories(albums) {
     <article class="reveal reveal-up">
       <img src="${escapeHtml(album.coverUrl)}" alt="${escapeHtml(album.title)}" loading="lazy">
       <h3>${escapeHtml(album.title)}</h3>
+      <p class="album-views">${escapeHtml(formatViews(album.views))}</p>
       <a href="${albumHref(album)}">Ler mais →</a>
     </article>
   `).join('');
@@ -146,6 +183,7 @@ function renderPortfolioAlbums(albums) {
           <span>${formatIndex(index)}</span>
           <h2>${escapeHtml(album.title)}</h2>
           <p>${escapeHtml(album.description)}</p>
+          <small>${escapeHtml(formatViews(album.views))}</small>
           <strong>Ver álbum →</strong>
         </div>
       </a>
@@ -173,6 +211,7 @@ function renderPhotoGallery(album) {
   document.querySelector('#albumTitle').textContent = album.title;
   document.querySelector('#albumDescription').textContent = album.description;
   document.querySelector('#albumCount').textContent = `${photos.length} ${photos.length === 1 ? 'foto' : 'fotos'}`;
+  document.querySelector('#albumViews').textContent = formatViews(album.views);
   setAlbumHero(album);
 
   if (!photos.length) {
@@ -244,13 +283,15 @@ async function initAlbumPage() {
       return;
     }
 
-    const album = await fetchAlbum(albumIdentifier);
+    let album = await fetchAlbum(albumIdentifier);
+    album = await incrementAlbumView(album);
     renderPhotoGallery(album);
   } catch (error) {
     console.error(error);
     document.querySelector('#albumTitle').textContent = 'Álbum indisponível';
     document.querySelector('#albumDescription').textContent = 'Não foi possível carregar este álbum pela API.';
     document.querySelector('#albumCount').textContent = '0 fotos';
+    document.querySelector('#albumViews').textContent = '0 visualizações';
     setContentState(gallery, 'Não foi possível carregar as fotos da API.');
   }
 }
