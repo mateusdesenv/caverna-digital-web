@@ -204,7 +204,9 @@ function renderPhotoGallery(album) {
   const gallery = document.querySelector('#photoGallery');
   if (!gallery) return;
 
-  const photos = Array.isArray(album.images) ? album.images : [];
+  const photos = Array.isArray(album.images)
+    ? [...album.images].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
+    : [];
 
   document.title = `${album.title} | Kauã Lippert Fotografia`;
   document.querySelector('#albumEyebrow').textContent = album.category || 'álbum selecionado';
