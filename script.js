@@ -1,4 +1,4 @@
-const API_BASE_URL = window.KAUA_LIPPERT_API_URL || 'http://localhost:3333/api';
+const API_BASE_URL = window.KAUA_LIPPERT_API_URL || 'https://caverna-digital-api.vercel.app/api';
 
 let observer;
 
