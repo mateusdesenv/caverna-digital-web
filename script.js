@@ -1,4 +1,4 @@
-const API_BASE_URL = window.KAUA_LIPPERT_API_URL || 'https://caverna-digital-api.vercel.app/api';
+const API_BASE_URL = window.KAUA_LIPPERT_API_URL || 'http://localhost:3333/api';
 
 let observer;
 
@@ -82,6 +82,32 @@ async function fetchAlbums() {
 async function fetchAlbum(identifier) {
   const payload = await requestApi(`/albums/${encodeURIComponent(identifier)}`);
   return payload.data;
+}
+
+function isAlbumVisible(album) {
+  return album?.isVisible !== false;
+}
+
+function isAlbumFeatured(album) {
+  return Boolean(album?.isFeatured ?? album?.featured);
+}
+
+function albumDisplayOrder(album, fallback = 0) {
+  const order = Number(album?.displayOrder);
+  return Number.isFinite(order) ? order : fallback;
+}
+
+function sortPublicAlbums(albums) {
+  return albums
+    .filter((album) => isAlbumVisible(album))
+    .map((album, index) => ({ ...album, displayOrder: albumDisplayOrder(album, index) }))
+    .sort((a, b) => albumDisplayOrder(a) - albumDisplayOrder(b));
+}
+
+function getFeaturedAlbums(albums) {
+  return albums
+    .filter((album) => isAlbumFeatured(album))
+    .sort((a, b) => albumDisplayOrder(a) - albumDisplayOrder(b));
 }
 
 async function incrementAlbumView(album) {
@@ -236,11 +262,13 @@ async function initHomePage() {
   if (!homeGrid && !storiesGrid) return;
 
   try {
-    const albums = await fetchAlbums();
-    renderHomeAlbums(albums);
-    renderLatestStories(albums);
+    const albums = sortPublicAlbums(await fetchAlbums());
+    const featuredAlbums = getFeaturedAlbums(albums);
+    const homeAlbums = featuredAlbums.length ? featuredAlbums : albums;
+    renderHomeAlbums(homeAlbums);
+    renderLatestStories(homeAlbums);
 
-    const featuredAlbum = albums.find((album) => album.featured) || albums[0];
+    const featuredAlbum = featuredAlbums[0] || albums[0];
     if (featuredAlbum?.coverUrl) {
       document.querySelector('.hero')?.style.setProperty(
         'background-image',
@@ -259,7 +287,7 @@ async function initPortfolioPage() {
   if (!portfolioGrid) return;
 
   try {
-    const albums = await fetchAlbums();
+    const albums = sortPublicAlbums(await fetchAlbums());
     renderPortfolioAlbums(albums);
   } catch (error) {
     console.error(error);
@@ -276,7 +304,7 @@ async function initAlbumPage() {
 
   try {
     if (!albumIdentifier) {
-      const albums = await fetchAlbums();
+      const albums = sortPublicAlbums(await fetchAlbums());
       albumIdentifier = albums[0]?.slug || albums[0]?.id;
     }
 
@@ -286,6 +314,9 @@ async function initAlbumPage() {
     }
 
     let album = await fetchAlbum(albumIdentifier);
+    if (!isAlbumVisible(album)) {
+      throw new Error('Hidden album');
+    }
     album = await incrementAlbumView(album);
     renderPhotoGallery(album);
   } catch (error) {
