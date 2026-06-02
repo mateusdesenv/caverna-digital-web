@@ -88,6 +88,11 @@ async function fetchAlbum(identifier) {
   return payload.data;
 }
 
+async function fetchPublicPlans() {
+  const payload = await requestApi('/plans/public');
+  return Array.isArray(payload.data) ? payload.data : [];
+}
+
 function isAlbumVisible(album) {
   return album?.isVisible !== false;
 }
@@ -142,6 +147,59 @@ function formatViews(views = 0) {
 function setContentState(container, message) {
   if (!container) return;
   container.innerHTML = `<div class="content-state">${escapeHtml(message)}</div>`;
+}
+
+function formatCurrency(value = 0) {
+  return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function formatPlanLimit(value, suffix = '') {
+  if (value === null || value === undefined) return 'Ilimitado';
+  return `${Number(value).toLocaleString('pt-BR')}${suffix}`;
+}
+
+function planBadge(plan) {
+  if (plan.commercialBadges?.bestSeller) return 'Mais escolhido';
+  if (plan.commercialBadges?.recommended || plan.isFeatured) return 'Melhor custo-benefício';
+  if (plan.commercialBadges?.isNew) return 'Novo';
+  return '';
+}
+
+function renderPublicPlans(plans) {
+  const container = document.querySelector('#pricingGrid');
+  if (!container) return;
+
+  if (!plans.length) {
+    setContentState(container, 'Nenhum plano disponível no momento.');
+    return;
+  }
+
+  container.innerHTML = plans.map((plan) => {
+    const badge = planBadge(plan);
+    const features = Array.isArray(plan.featureList) ? plan.featureList : [];
+
+    return `
+      <article class="pricing-card reveal reveal-up ${plan.isFeatured ? 'is-featured' : ''}">
+        ${badge ? `<span class="pricing-badge">${escapeHtml(badge)}</span>` : ''}
+        <h2>${escapeHtml(plan.name)}</h2>
+        <p>${escapeHtml(plan.description || '')}</p>
+        <strong>${formatCurrency(plan.monthlyPrice || plan.price)}<small>/mês</small></strong>
+        ${plan.yearlyPrice ? `<span class="yearly-price">${formatCurrency(plan.yearlyPrice)}/ano</span>` : ''}
+        <ul>
+          <li>${formatPlanLimit(plan.limits?.albums ?? plan.limits?.albumLimit)} álbuns</li>
+          <li>${formatPlanLimit(plan.limits?.images ?? plan.limits?.imageLimit)} imagens</li>
+          <li>${formatPlanLimit(plan.limits?.storageGb ?? plan.limits?.storageGbLimit, ' GB')} de armazenamento</li>
+          <li>${formatPlanLimit(plan.limits?.monthlyViews ?? plan.limits?.monthlyViewsLimit)} visualizações/mês</li>
+        </ul>
+        <div class="pricing-features">
+          ${features.length ? features.map((feature) => `<span>${escapeHtml(feature)}</span>`).join('') : '<span>Recursos cadastrados no plano</span>'}
+        </div>
+        <a class="btn btn-light" href="index.html#contato">Escolher plano</a>
+      </article>
+    `;
+  }).join('');
+
+  setupRevealObserver();
 }
 
 function renderHomeAlbums(albums) {
@@ -333,6 +391,18 @@ async function initAlbumPage() {
   }
 }
 
+async function initPricingPage() {
+  const pricingGrid = document.querySelector('#pricingGrid');
+  if (!pricingGrid) return;
+
+  try {
+    renderPublicPlans(await fetchPublicPlans());
+  } catch (error) {
+    console.error(error);
+    setContentState(pricingGrid, 'Não foi possível carregar os planos da API.');
+  }
+}
+
 const navbar = document.querySelector('.navbar');
 const parallaxItems = document.querySelectorAll('[data-parallax]');
 let ticking = false;
@@ -399,3 +469,4 @@ updateMotion();
 initHomePage();
 initPortfolioPage();
 initAlbumPage();
+initPricingPage();
