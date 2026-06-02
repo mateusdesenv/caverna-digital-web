@@ -65,13 +65,6 @@ h2 { font-size: 38px; text-transform: uppercase; letter-spacing: 3px; font-weigh
 .about-text p { max-width: 540px; color: var(--cream); line-height: 1.9; margin-bottom: 18px; font-size: 17px; font-style: italic; }
 .btn-light { margin-top: 24px; }
 
-.testimonials { padding: 78px 8vw; background: #151512; text-align: center; }
-.testimonials h2 { font-size: 24px; margin-bottom: 48px; }
-.testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 52px; text-align: left; }
-blockquote { color: var(--cream); line-height: 1.8; font-size: 15px; }
-blockquote::before { content: '“'; color: var(--gold); font-size: 42px; display: block; line-height: .8; }
-cite { display: block; margin-top: 18px; color: var(--muted); font-style: normal; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
-
 .stories { padding: 72px 8vw 88px; background: #10100e; }
 .stories h2 { text-align: center; margin-bottom: 44px; }
 .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; }
@@ -90,7 +83,7 @@ footer { padding: 38px 8vw; display: flex; justify-content: space-between; align
   .menu, .socials { display: none; }
   .navbar { padding: 0 24px; }
   .hero-content { padding: 110px 24px 0; }
-  .categories, .stories-grid, .testimonial-grid { grid-template-columns: 1fr; }
+  .categories, .stories-grid { grid-template-columns: 1fr; }
   .about { grid-template-columns: 1fr; }
   .cta { grid-template-columns: 1fr; }
   footer { flex-direction: column; gap: 18px; text-align: center; }
@@ -179,7 +172,7 @@ body { overflow-x: hidden; }
 }
 .btn:hover::before { transform: translateX(120%); }
 
-.hero-content h1, .about-text h2, .stories h2, .testimonials h2 {
+.hero-content h1, .about-text h2, .stories h2 {
   text-shadow: 0 12px 38px rgba(0,0,0,.38);
 }
 
