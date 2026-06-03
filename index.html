@@ -3,86 +3,252 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kauã Lippert Fotografia</title>
+  <meta name="description" content="Caverna Studio: SaaS para fotógrafos criarem portfólios profissionais com painel administrativo próprio." />
+  <title>Caverna Studio | Portfólio de fotografia com painel próprio</title>
   <link rel="preconnect" href="https://images.unsplash.com">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="hero" data-parallax="0.22">
+  <header class="site-header">
     <nav class="navbar reveal reveal-down">
-      <div class="brand">
-        <div class="monogram">KL</div>
-        <div>
-          <strong>Kauã Lippert</strong>
-          <span>Fotografia</span>
+      <a class="brand" href="#top" aria-label="Caverna Studio">
+        <span class="brand-mark">CS</span>
+        <span>
+          <strong>Caverna Studio</strong>
+          <small>Portfolio SaaS</small>
+        </span>
+      </a>
+
+      <ul class="menu" aria-label="Navegação principal">
+        <li><a href="#produto">Produto</a></li>
+        <li><a href="#recursos">Recursos</a></li>
+        <li><a href="#planos">Planos</a></li>
+        <li><a href="#demonstracao">Demonstração</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a class="btn btn-ghost" href="pricing.html">Entrar</a>
+        <a class="btn btn-primary" href="#planos">Começar agora</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy reveal reveal-up">
+        <p class="eyebrow">SaaS premium para fotógrafos independentes e studios</p>
+        <h1>Seu portfólio de fotografia, agora com painel próprio.</h1>
+        <p class="hero-subtitle">Crie álbuns, organize galerias e mantenha seu site sempre atualizado sem depender de desenvolvedor.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#planos">Criar meu portfólio</a>
+          <a class="btn btn-secondary" href="#demonstracao">Ver demonstração</a>
         </div>
       </div>
 
-      <ul class="menu">
-        <li>Sobre</li>
-        <li><a href="portfolio.html">Portfólio</a></li>
-        <li><a href="pricing.html">Planos</a></li>
-        <li>Informações</li>
-        <li>Contato</li>
-      </ul>
+      <div class="product-mockup reveal reveal-up" aria-label="Mockup do site público e painel admin">
+        <div class="mockup-public tilt-card">
+          <div class="window-bar">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="portfolio-preview">
+            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1000&q=80" alt="Prévia de portfólio de casamento">
+            <div class="portfolio-overlay">
+              <small>Portfolio público</small>
+              <strong>Luz & Movimento</strong>
+              <span>24 álbuns publicados</span>
+            </div>
+          </div>
+          <div class="album-row">
+            <span>Casamentos</span>
+            <span>Ensaios</span>
+            <span>Campanhas</span>
+          </div>
+        </div>
 
-      <div class="socials">◎ ◉</div>
-    </nav>
-
-    <section class="hero-content reveal reveal-up">
-      <p class="eyebrow">registrando histórias. criando memórias.</p>
-      <h1>Histórias reais merecem ser <em>lembradas para sempre.</em></h1>
-      <p>Fotografia de casamentos, ensaios e momentos que marcam a vida.</p>
-      <a href="portfolio.html" class="btn">Ver portfólio</a>
-    </section>
-  </header>
-
-  <main>
-    <section class="categories reveal-stagger" id="homeAlbumGrid" data-album-limit="4">
-      <div class="content-state">Carregando álbuns...</div>
-    </section>
-
-    <section class="about reveal-stagger">
-      <div class="about-image reveal reveal-left" data-parallax="0.10">
-        <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=1000&q=80" alt="Kauã Lippert fotógrafo">
-        <span>Kauã Lippert</span>
+        <div class="mockup-admin tilt-card">
+          <div class="admin-topline">
+            <span>Painel admin</span>
+            <button>Novo álbum</button>
+          </div>
+          <div class="metric-grid">
+            <div>
+              <small>Visualizações</small>
+              <strong>18.4k</strong>
+            </div>
+            <div>
+              <small>Álbuns</small>
+              <strong>32</strong>
+            </div>
+          </div>
+          <div class="admin-list">
+            <article>
+              <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=320&q=80" alt="Capa de álbum">
+              <div><strong>Editorial urbano</strong><span>Destacado na home</span></div>
+            </article>
+            <article>
+              <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=320&q=80" alt="Capa de álbum">
+              <div><strong>Casamento Marina</strong><span>1.280 views</span></div>
+            </article>
+            <article>
+              <img src="https://images.unsplash.com/photo-1520390138845-fd2d229dd553?auto=format&fit=crop&w=320&q=80" alt="Capa de álbum">
+              <div><strong>Campanha verão</strong><span>Ordem 03</span></div>
+            </article>
+          </div>
+        </div>
       </div>
-      <div class="about-text reveal reveal-right">
-        <small>Sobre mim</small>
-        <h2>Hey, sou o Kauã!</h2>
-        <p>Acredito que cada história merece ser contada com verdade, leveza e sensibilidade.</p>
-        <p>Mais do que fotos, meu propósito é eternizar sentimentos, conexões e momentos que se tornam lembranças para a vida toda.</p>
-        <a href="#" class="btn btn-light">Saiba mais sobre mim</a>
+    </section>
+
+    <section class="problem section-shell" id="produto">
+      <div class="section-heading reveal reveal-up">
+        <p class="eyebrow">O problema</p>
+        <h2>Seu trabalho muda toda semana. Seu site também deveria.</h2>
+        <p>Fotógrafos produzem novos ensaios, casamentos e campanhas constantemente. Mas atualizar um site tradicional costuma depender de terceiros, gerar custo e atrasar a publicação dos trabalhos.</p>
+      </div>
+      <div class="pain-grid reveal-stagger">
+        <article class="feature-card reveal reveal-up"><span>01</span><h3>Site parado</h3><p>Projetos recentes ficam fora do ar enquanto o site espera uma nova atualização.</p></article>
+        <article class="feature-card reveal reveal-up"><span>02</span><h3>Portfólio desatualizado</h3><p>O melhor trabalho da semana demora para chegar ao olhar de novos clientes.</p></article>
+        <article class="feature-card reveal reveal-up"><span>03</span><h3>Dependência de desenvolvedor</h3><p>Cada alteração simples vira briefing, fila, custo e retrabalho.</p></article>
+        <article class="feature-card reveal reveal-up"><span>04</span><h3>Falta de métricas</h3><p>Sem dados claros, fica difícil entender quais álbuns geram mais interesse.</p></article>
       </div>
     </section>
 
-    <section class="stories reveal-stagger">
-      <h2>Últimas histórias</h2>
-      <div class="stories-grid" id="latestStoriesGrid">
-        <div class="content-state">Carregando histórias...</div>
+    <section class="solution section-shell" id="recursos">
+      <div class="section-heading reveal reveal-up">
+        <p class="eyebrow">A solução</p>
+        <h2>Um site profissional com gerenciamento simples.</h2>
+      </div>
+      <div class="resource-grid reveal-stagger">
+        <article class="feature-card reveal reveal-up"><span>∞</span><h3>Álbuns escaláveis</h3><p>Álbuns ilimitados conforme plano para crescer com seu volume de trabalhos.</p></article>
+        <article class="feature-card reveal reveal-up"><span>↑</span><h3>Upload de imagens</h3><p>Envie fotos, capas e descrições em poucos cliques pelo painel.</p></article>
+        <article class="feature-card reveal reveal-up"><span>↕</span><h3>Drag and drop</h3><p>Defina a ordem de exibição do portfólio de forma visual e rápida.</p></article>
+        <article class="feature-card reveal reveal-up"><span>★</span><h3>Destaques na home</h3><p>Escolha os álbuns que merecem aparecer primeiro para seus visitantes.</p></article>
+        <article class="feature-card reveal reveal-up"><span>●</span><h3>Visualizações</h3><p>Acompanhe o interesse nos álbuns publicados com contadores objetivos.</p></article>
+        <article class="feature-card reveal reveal-up"><span>◐</span><h3>Site personalizado</h3><p>Uma presença pública elegante, rápida e pensada para fotografia.</p></article>
+        <article class="feature-card reveal reveal-up"><span>▦</span><h3>Planos escaláveis</h3><p>Comece leve e evolua para recursos avançados quando seu studio pedir.</p></article>
+        <article class="feature-card reveal reveal-up"><span>G</span><h3>Login com Google</h3><p>Acesso simples e seguro para entrar no painel sem fricção.</p></article>
       </div>
     </section>
 
-    <section class="cta reveal reveal-up" id="contato">
-      <div class="camera">▣</div>
-      <h2>Vamos registrar sua história?</h2>
-      <p>Entre em contato e vamos criar lembranças inesquecíveis juntos.</p>
-      <a href="https://wa.me/5500000000000" class="btn">Quero reservar</a>
+    <section class="workflow section-shell">
+      <div class="section-heading reveal reveal-up">
+        <p class="eyebrow">Como funciona</p>
+        <h2>Da conta criada ao portfólio publicado em três passos.</h2>
+      </div>
+      <div class="steps reveal-stagger">
+        <article class="step-card reveal reveal-up"><span>1</span><h3>Crie sua conta</h3><p>Login rápido com Google para entrar no painel e preparar seu espaço.</p></article>
+        <article class="step-card reveal reveal-up"><span>2</span><h3>Monte seus álbuns</h3><p>Adicione capas, fotos, descrições e organize tudo pelo painel.</p></article>
+        <article class="step-card reveal reveal-up"><span>3</span><h3>Publique seu portfólio</h3><p>Seu site público é atualizado automaticamente assim que você salva.</p></article>
+      </div>
+    </section>
+
+    <section class="dashboard section-shell" id="demonstracao">
+      <div class="dashboard-copy reveal reveal-left">
+        <p class="eyebrow">Demonstração do painel</p>
+        <h2>Controle total do seu portfólio em uma interface simples, moderna e profissional.</h2>
+        <p>Veja métricas, gerencie álbuns, acompanhe o plano atual e organize a vitrine do seu trabalho sem abrir um editor de código.</p>
+      </div>
+      <div class="dashboard-frame reveal reveal-right tilt-card">
+        <div class="dashboard-sidebar">
+          <strong>Caverna</strong>
+          <span>Álbuns</span>
+          <span>Portfólio</span>
+          <span>Analytics</span>
+          <span>Plano</span>
+        </div>
+        <div class="dashboard-main">
+          <div class="dashboard-header">
+            <div><small>Plano atual</small><strong>Profissional</strong></div>
+            <button>Novo álbum</button>
+          </div>
+          <div class="metric-grid dashboard-metrics">
+            <div><small>Views no mês</small><strong>8.920</strong></div>
+            <div><small>Álbuns ativos</small><strong>20</strong></div>
+            <div><small>Imagens</small><strong>486</strong></div>
+          </div>
+          <div class="portfolio-board">
+            <article><span></span><div><strong>Casamento no campo</strong><small>Arraste para reorganizar</small></div><b>01</b></article>
+            <article><span></span><div><strong>Retratos corporativos</strong><small>Publicado</small></div><b>02</b></article>
+            <article><span></span><div><strong>Editorial de moda</strong><small>Destacado</small></div><b>03</b></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing section-shell" id="planos">
+      <div class="section-heading reveal reveal-up">
+        <p class="eyebrow">Planos</p>
+        <h2>Escolha o tamanho ideal para o seu portfólio.</h2>
+      </div>
+      <div class="pricing-grid reveal-stagger">
+        <article class="pricing-card reveal reveal-up">
+          <h3>Essencial</h3>
+          <strong>R$ 19,90<small>/mês</small></strong>
+          <ul>
+            <li>2 álbuns</li>
+            <li>20 imagens</li>
+            <li>Portfólio público</li>
+            <li>Contador de visualizações</li>
+            <li>Organização de álbuns</li>
+          </ul>
+          <a class="btn btn-secondary" href="#">Começar agora</a>
+        </article>
+        <article class="pricing-card is-featured reveal reveal-up">
+          <span class="pricing-badge">Mais escolhido</span>
+          <h3>Profissional</h3>
+          <strong>R$ 49,90<small>/mês</small></strong>
+          <ul>
+            <li>20 álbuns</li>
+            <li>500 imagens</li>
+            <li>Analytics avançado</li>
+            <li>Remover marca Caverna Studio</li>
+            <li>Organização completa</li>
+            <li>Destaques na home</li>
+          </ul>
+          <a class="btn btn-primary" href="#">Começar agora</a>
+        </article>
+        <article class="pricing-card reveal reveal-up">
+          <h3>Studio</h3>
+          <strong>R$ 89,90<small>/mês</small></strong>
+          <ul>
+            <li>80 álbuns</li>
+            <li>2.000 imagens</li>
+            <li>Domínio personalizado</li>
+            <li>Multiusuário</li>
+            <li>Galerias privadas</li>
+            <li>Suporte prioritário</li>
+          </ul>
+          <a class="btn btn-secondary" href="#">Começar agora</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="final-cta section-shell">
+      <div class="final-panel reveal reveal-up">
+        <p class="eyebrow">Pronto para publicar melhor</p>
+        <h2>Transforme seu portfólio em uma ferramenta de trabalho.</h2>
+        <p>Pare de depender de terceiros para atualizar seus trabalhos. Publique novos álbuns quando quiser, acompanhe visualizações e mantenha sua presença profissional sempre viva.</p>
+        <a class="btn btn-primary" href="#planos">Começar agora</a>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <div class="brand">
-      <div class="monogram">KL</div>
-      <div>
-        <strong>Kauã Lippert</strong>
-        <span>Fotografia</span>
-      </div>
-    </div>
-    <p>© 2024 Kauã Lippert Fotografia. Todos os direitos reservados.</p>
-    <p>Desenvolvido com ♡</p>
+  <footer class="footer">
+    <a class="brand" href="#top" aria-label="Caverna Studio">
+      <span class="brand-mark">CS</span>
+      <span>
+        <strong>Caverna Studio</strong>
+        <small>Portfolio SaaS</small>
+      </span>
+    </a>
+    <nav>
+      <a href="#produto">Produto</a>
+      <a href="#planos">Planos</a>
+      <a href="mailto:contato@cavernastudio.com">Contato</a>
+      <a href="pricing.html">Login</a>
+    </nav>
+    <p>© 2026 Caverna Studio. Todos os direitos reservados.</p>
   </footer>
-  <script src="env.js?v=env"></script>
-  <script src="script.js?v=api"></script>
+
+  <script src="script.js?v=landing"></script>
 </body>
 </html>
