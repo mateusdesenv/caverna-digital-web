@@ -1,19 +1,10 @@
 const API_BASE_URL = normalizeApiUrl(window.KAUA_LIPPERT_API_URL || 'https://caverna-digital-api.vercel.app/api');
-const SITE_SLUG = getCurrentSiteSlug();
+const SITE_SLUG = 'mateus-camargo';
 
 let observer;
 
 function normalizeApiUrl(url) {
   return String(url || '').replace(/\/+$/, '');
-}
-
-function getCurrentSiteSlug() {
-  const params = new URLSearchParams(window.location.search);
-  const explicitSlug = params.get('site') || params.get('c') || window.CAVERNA_DIGITAL_SITE_SLUG;
-  if (explicitSlug) return String(explicitSlug);
-
-  const pathMatch = window.location.pathname.match(/\/c\/([^/]+)/);
-  return pathMatch?.[1] || 'caverna-digital';
 }
 
 function setupRevealObserver() {
