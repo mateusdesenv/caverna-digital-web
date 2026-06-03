@@ -1,9 +1,19 @@
 const API_BASE_URL = normalizeApiUrl(window.KAUA_LIPPERT_API_URL || 'https://caverna-digital-api.vercel.app/api');
+const SITE_SLUG = getCurrentSiteSlug();
 
 let observer;
 
 function normalizeApiUrl(url) {
   return String(url || '').replace(/\/+$/, '');
+}
+
+function getCurrentSiteSlug() {
+  const params = new URLSearchParams(window.location.search);
+  const explicitSlug = params.get('site') || params.get('c') || window.CAVERNA_DIGITAL_SITE_SLUG;
+  if (explicitSlug) return String(explicitSlug);
+
+  const pathMatch = window.location.pathname.match(/\/c\/([^/]+)/);
+  return pathMatch?.[1] || 'caverna-digital';
 }
 
 function setupRevealObserver() {
@@ -51,7 +61,7 @@ function escapeHtml(value = '') {
 }
 
 function albumHref(album) {
-  return `album.html?album=${encodeURIComponent(album.slug || album.id)}`;
+  return `album.html?site=${encodeURIComponent(SITE_SLUG)}&album=${encodeURIComponent(album.slug || album.id)}`;
 }
 
 function formatIndex(index) {
@@ -68,24 +78,25 @@ async function requestApi(path) {
   return response.json();
 }
 
-async function postApi(path) {
-  const response = await fetch(`${API_BASE_URL}${path}`, { method: 'POST' });
-
-  if (!response.ok) {
-    throw new Error(`API error ${response.status}`);
-  }
-
-  return response.json();
-}
-
 async function fetchAlbums() {
-  const payload = await requestApi('/albums');
+  const payload = await requestApi(`/public/sites/${encodeURIComponent(SITE_SLUG)}/albums`);
   return Array.isArray(payload.data) ? payload.data : [];
 }
 
 async function fetchAlbum(identifier) {
-  const payload = await requestApi(`/albums/${encodeURIComponent(identifier)}`);
-  return payload.data;
+  const slugViewKey = `viewed_album_${SITE_SLUG}_${identifier}`;
+  const shouldIncrement = !sessionStorage.getItem(slugViewKey);
+  const payload = await requestApi(
+    `/public/sites/${encodeURIComponent(SITE_SLUG)}/albums/${encodeURIComponent(identifier)}${shouldIncrement ? '' : '?increment=false'}`,
+  );
+  const album = payload.data;
+
+  if (album?.id && shouldIncrement) {
+    sessionStorage.setItem(slugViewKey, 'true');
+    sessionStorage.setItem(`viewed_album_${album.id}`, 'true');
+  }
+
+  return album;
 }
 
 async function fetchPublicPlans() {
@@ -120,23 +131,7 @@ function getFeaturedAlbums(albums) {
 }
 
 async function incrementAlbumView(album) {
-  const albumId = album.id;
-  if (!albumId) return album;
-
-  const storageKey = `viewed_album_${albumId}`;
-  if (sessionStorage.getItem(storageKey)) {
-    return album;
-  }
-
-  sessionStorage.setItem(storageKey, 'true');
-
-  try {
-    const payload = await postApi(`/albums/${encodeURIComponent(albumId)}/views`);
-    return payload.data || album;
-  } catch (error) {
-    sessionStorage.removeItem(storageKey);
-    throw error;
-  }
+  return album;
 }
 
 function formatViews(views = 0) {
@@ -375,11 +370,10 @@ async function initAlbumPage() {
       return;
     }
 
-    let album = await fetchAlbum(albumIdentifier);
+    const album = await fetchAlbum(albumIdentifier);
     if (!isAlbumVisible(album)) {
       throw new Error('Hidden album');
     }
-    album = await incrementAlbumView(album);
     renderPhotoGallery(album);
   } catch (error) {
     console.error(error);
