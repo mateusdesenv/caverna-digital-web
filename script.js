@@ -130,6 +130,93 @@ function formatViews(views = 0) {
   return `${value} ${value === 1 ? 'visualização' : 'visualizações'}`;
 }
 
+function sanitizeFileName(value = 'imagem') {
+  return String(value || 'imagem')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'imagem';
+}
+
+function showDownloadToast(message, isError = false) {
+  let toast = document.querySelector('#downloadToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'downloadToast';
+    toast.className = 'download-toast';
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.toggle('is-error', isError);
+  toast.classList.add('is-visible');
+  window.clearTimeout(showDownloadToast.timer);
+  showDownloadToast.timer = window.setTimeout(() => toast.classList.remove('is-visible'), 2800);
+}
+
+function setDownloadButtonLoading(button, loading) {
+  if (!button) return;
+  button.disabled = loading;
+  button.classList.toggle('is-loading', loading);
+  button.textContent = loading ? 'Gerando...' : 'Download';
+}
+
+function loadImageForDownload(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Não foi possível carregar a imagem para download.'));
+    image.src = imageUrl;
+  });
+}
+
+async function downloadWatermarkedImage({ imageUrl, imageName, albumSlug, button }) {
+  setDownloadButtonLoading(button, true);
+
+  try {
+    const image = await loadImageForDownload(imageUrl);
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth || image.width;
+    canvas.height = image.naturalHeight || image.height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas indisponível.');
+
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const fontSize = Math.max(canvas.width * 0.035, 24);
+    const padding = Math.max(canvas.width * 0.035, 32);
+    ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+    ctx.shadowBlur = 8;
+    ctx.fillText('Caverna Studio', canvas.width - padding, canvas.height - padding);
+
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    if (!blob) throw new Error('Não foi possível gerar a imagem.');
+
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = `${sanitizeFileName(albumSlug)}-${sanitizeFileName(imageName)}-caverna-studio.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+    showDownloadToast('Download iniciado.');
+  } catch (error) {
+    console.error(error);
+    // TODO: se o provedor bloquear Canvas por CORS, usar fallback backend com validação do álbum/imagem.
+    showDownloadToast('Não foi possível baixar a imagem.', true);
+  } finally {
+    setDownloadButtonLoading(button, false);
+  }
+}
+
 function setContentState(container, message) {
   if (!container) return;
   container.innerHTML = `<div class="content-state">${escapeHtml(message)}</div>`;
@@ -295,11 +382,26 @@ function renderPhotoGallery(album) {
     return;
   }
 
-  gallery.innerHTML = photos.map((photo, index) => `
-    <button class="photo-card reveal reveal-up" type="button" data-src="${escapeHtml(photo.url)}">
-      <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.alt || `${album.title} - foto ${index + 1}`)}" loading="lazy">
-    </button>
-  `).join('');
+  gallery.innerHTML = photos.map((photo, index) => {
+    const alt = photo.alt || `${album.title} - foto ${index + 1}`;
+    const imageName = photo.name || photo.alt || `${album.slug || album.title}-foto-${index + 1}`;
+
+    return `
+    <article class="photo-card reveal reveal-up">
+      <button class="photo-open" type="button" data-src="${escapeHtml(photo.url)}" aria-label="Visualizar ${escapeHtml(alt)}">
+        <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(alt)}" loading="lazy">
+      </button>
+      <button
+        class="photo-download"
+        type="button"
+        data-url="${escapeHtml(photo.url)}"
+        data-name="${escapeHtml(imageName)}"
+        data-album="${escapeHtml(album.slug || album.id || album.title)}"
+        aria-label="Baixar ${escapeHtml(alt)} com marca d'água"
+      >Download</button>
+    </article>
+  `;
+  }).join('');
 
   setupRevealObserver();
 }
@@ -425,9 +527,22 @@ function setupLightbox() {
   if (!gallery || !lightbox || !lightboxImage || !closeLightbox) return;
 
   gallery.addEventListener('click', (event) => {
-    const card = event.target.closest('.photo-card');
-    if (!card) return;
-    lightboxImage.src = card.dataset.src;
+    const downloadButton = event.target.closest('.photo-download');
+    if (downloadButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      void downloadWatermarkedImage({
+        imageUrl: downloadButton.dataset.url,
+        imageName: downloadButton.dataset.name,
+        albumSlug: downloadButton.dataset.album,
+        button: downloadButton,
+      });
+      return;
+    }
+
+    const openButton = event.target.closest('.photo-open');
+    if (!openButton) return;
+    lightboxImage.src = openButton.dataset.src;
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
   });
